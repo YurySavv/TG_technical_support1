@@ -60,7 +60,7 @@ def handle_start(message):
     # Записываем информацию о пользователе в БД
     record_user_info(user_id, username, platform)
 
-    offset = 0  # Смещение для пагинации
+    offset = 0  # Смещение
 
     buttons_data = get_buttons_from_db(offset)
 
@@ -97,9 +97,7 @@ def handle_button_click(call):
         # Отправляем сообщение о выборе приложения
         bot.send_message(chat_id, f"Вы выбрали приложение: {selected_program['name']}")
 
-        # После выбора приложения можно добавить логику для дополнительных действий или отобразить новые кнопки
-        # Например, можно добавить кнопки "Инструкции" и "Связь с оператором" и вернуть к предыдущему меню с кнопкой "Назад"
-
+        
         keyboard = types.InlineKeyboardMarkup()
         instructions_button = types.InlineKeyboardButton("Инструкции", callback_data="instructions")
         operator_button = types.InlineKeyboardButton("Связь с оператором", callback_data="operator")
@@ -122,7 +120,7 @@ def handle_instructions_button_click(call):
     logging.info(f"Received instructions button click: {call.data}")
     chat_id = call.message.chat.id
 
-    # Выполняем запрос к таблице Instructions, чтобы найти тексты инструкций для данной программы
+    # Выполняем запрос к таблице Instructions, чтобы найти тексты инструкций для программы
     connection = sqlite3.connect('chat_bot_database.db')
     cursor = connection.cursor()
 
@@ -165,9 +163,6 @@ def handle_button_click(call):
 
         # Отправляем сообщение о выборе приложения
         bot.send_message(chat_id, f"Вы выбрали приложение: {selected_program['name']}")
-
-        # После выбора приложения можно добавить логику для дополнительных действий или отобразить новые кнопки
-        # Например, можно добавить кнопки "Инструкции" и "Связь с оператором" и вернуть к предыдущему меню с кнопкой "Назад"
 
         keyboard = types.InlineKeyboardMarkup()
         instructions_button = types.InlineKeyboardButton("Инструкции", callback_data="instructions")
@@ -214,13 +209,13 @@ def handle_rate_button_click(chat_id, instruction_id):
 def handle_rate_click(call):
     logging.info(f"Received rate button click: {call.data}")
     chat_id = call.message.chat.id
-    data = call.data.split('_')  # Разделяем данные в callback_data
+    data = call.data.split('_')  # Разделение данных в callback_data
 
     if len(data) == 3:
         instruction_id = data[2]  # Получаем instruction_id из callback_data
         rating = data[1]  # Получаем оценку из callback_data
 
-        # TODO: Сохранить оценку в базе данных или выполнить другие действия в зависимости от оценки
+        # Сохранить оценку в базе данных или выполнить другие действия в зависимости от оценки
 
         bot.send_message(chat_id, f"Спасибо за вашу оценку {rating}!")
 
@@ -232,7 +227,7 @@ def handle_offer_button_click(chat_id, instruction_id):
 # Функция для обработки кнопки "Назад"
 def handle_back_button_click(call):
     chat_id = call.message.chat.id
-    offset = 0  # Смещение для пагинации
+    offset = 0  # Смещение
 
     buttons_data = get_buttons_from_db(offset)
 
